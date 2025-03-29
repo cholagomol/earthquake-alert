@@ -16,7 +16,9 @@ jobs:
         with:
           python-version: "3.x"
       - name: Install Dependencies
-        run: pip install requests
+        run: |
+          pip install requests
+          pip install pytz  # ติดตั้ง pytz ด้วย
       - name: Run Script
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
