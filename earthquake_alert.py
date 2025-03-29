@@ -6,7 +6,7 @@ import pytz
 USGS_API = "https://earthquake.usgs.gov/fdsnws/event/1/query"
 
 def get_earthquake_data():
-    params = {"format": "geojson", "starttime": "2025-03-29", "minmagnitude": 4.5, "limit": 2}
+    params = {"format": "geojson", "starttime": "2025-03-29", "minmagnitude": 4.5, "limit": 1}
     response = requests.get(USGS_API, params=params)
     return response.json()
 
