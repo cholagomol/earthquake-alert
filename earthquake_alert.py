@@ -23,8 +23,19 @@ def get_color_for_magnitude(mag):
 
 def format_earthquake_time(iso_time):
     """แปลงเวลาเป็นรูปแบบที่อ่านง่าย เช่น '2025-03-29 14:30:00'"""
+    # เปลี่ยนจาก ISO time เป็น datetime object
     time_obj = datetime.strptime(iso_time, "%Y-%m-%dT%H:%M:%S.%fZ")
-    return time_obj.strftime("%d-%m-%Y %H:%M:%S")  # ปรับรูปแบบเวลาให้เหมาะสม
+    
+    # กำหนด timezone ที่เป็น UTC
+    utc_zone = pytz.utc
+    
+    # แปลงเวลาไปยัง timezone ที่เป็น UTC+7 (เวลาในประเทศไทย)
+    thailand_zone = pytz.timezone('Asia/Bangkok')
+    time_obj_utc = pytz.utc.localize(time_obj)
+    time_obj_thailand = time_obj_utc.astimezone(thailand_zone)
+    
+    # แปลงเป็นรูปแบบที่อ่านง่าย
+    return time_obj_thailand.strftime("%d-%m-%Y %H:%M:%S")  # ปรับรูปแบบเวลาให้เหมาะสม
 
 def send_discord_message(message, color):
     """ส่งข้อความไปยัง Discord โดยใช้ Embed และกำหนดสี"""
