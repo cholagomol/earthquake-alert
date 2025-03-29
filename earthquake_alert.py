@@ -3,6 +3,9 @@ import requests
 from datetime import datetime
 import pytz
 
+# ตั้งค่า Webhook URL ตรงนี้
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/your_webhook_url"
+
 USGS_API = "https://earthquake.usgs.gov/fdsnws/event/1/query"
 
 def get_earthquake_data():
@@ -42,12 +45,13 @@ def send_discord_message(message, color):
     embed = {
         "embeds": [{
             "title": "แผ่นดินไหวเกิดขึ้น!",
-            "description": message,
+            "description": f"@everyone {message}",  # แท็กทุกคนในเซิร์ฟเวอร์
             "color": color
         }]
     }
-    webhook_url = os.environ['DISCORD_WEBHOOK_URL']  # ใช้ secrets ใน GitHub
-    requests.post(webhook_url, json=embed)
+    
+    # ใช้ Webhook URL ในการส่งข้อความ
+    requests.post(DISCORD_WEBHOOK_URL, json=embed)
 
 def main():
     data = get_earthquake_data()
