@@ -45,7 +45,7 @@ def send_discord_message(message, color):
     embed = {
         "embeds": [{
             "title": "แผ่นดินไหวเกิดขึ้น!",
-            "description": f"@everyone {message}",  # แท็กทุกคนในเซิร์ฟเวอร์
+            "description": message,
             "color": color
         }]
     }
