@@ -22,21 +22,9 @@ def get_color_for_magnitude(mag):
         return 0x00FF00  # สีเขียว
 
 def format_earthquake_time(iso_time):
-    """แปลงเวลาเป็นรูปแบบที่อ่านง่าย เช่น '2025-03-29 14:30:00' และแปลงเป็น พ.ศ."""
-    # แปลงเวลา UTC เป็นเวลาในประเทศไทย (GMT+7)
+    """แปลงเวลาเป็นรูปแบบที่อ่านง่าย เช่น '2025-03-29 14:30:00'"""
     time_obj = datetime.strptime(iso_time, "%Y-%m-%dT%H:%M:%S.%fZ")
-    utc_timezone = pytz.utc
-    thailand_timezone = pytz.timezone('Asia/Bangkok')
-    
-    # แปลงเวลา UTC ไปเป็นเวลาในประเทศไทย
-    time_obj_utc = utc_timezone.localize(time_obj)
-    time_obj_thailand = time_obj_utc.astimezone(thailand_timezone)
-    
-    # แปลงปีจาก ค.ศ. เป็น พ.ศ.
-    year_buddhist = time_obj_thailand.year + 543
-    
-    # ส่งคืนเวลาในรูปแบบที่ต้องการ โดยแสดงปี พ.ศ.
-    return time_obj_thailand.strftime(f"%d-%m-{year_buddhist} %H:%M:%S")  # เช่น '29-03-2568 21:30:00'
+    return time_obj.strftime("%d-%m-%Y %H:%M:%S")  # ปรับรูปแบบเวลาให้เหมาะสม
 
 def send_discord_message(message, color):
     """ส่งข้อความไปยัง Discord โดยใช้ Embed และกำหนดสี"""
@@ -52,16 +40,18 @@ def send_discord_message(message, color):
 
 def main():
     data = get_earthquake_data()
-    # เรียงข้อมูลแผ่นดินไหวจากล่าสุดไปเก่าสุด
-    earthquakes = sorted(data["features"], key=lambda x: x["properties"]["time"], reverse=True)
+    quakes = data["features"]
 
-    # ข้อความสุดท้ายของแผ่นดินไหวล่าสุด
-    for quake in earthquakes:
+    # เรียงลำดับแผ่นดินไหวจากใหม่สุดไปเก่าสุด
+    quakes_sorted = sorted(quakes, key=lambda x: x["properties"]["time"], reverse=True)
+
+    # สำหรับแสดงแผ่นดินไหวที่ล่าสุดอยู่ด้านล่าง
+    for quake in quakes_sorted:
         place = quake["properties"]["place"]
         mag = quake["properties"]["mag"]
         time = quake["properties"]["time"] / 1000  # เวลาใน millisecond (ต้องแบ่งด้วย 1000 เพื่อแปลงเป็นวินาที)
         formatted_time = format_earthquake_time(datetime.utcfromtimestamp(time).strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
-        
+
         color = get_color_for_magnitude(mag)
         message = f"🌍 แผ่นดินไหวขนาด {mag} ที่ {place} เกิดขึ้นเมื่อ {formatted_time}"
         send_discord_message(message, color)
