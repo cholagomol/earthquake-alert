@@ -1,0 +1,23 @@
+name: Earthquake Notification
+
+on:
+  schedule:
+    - cron: "* * * * *"  # รันทุกนาที
+  workflow_dispatch:  # ให้รันได้ด้วยตนเอง
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+      - name: Install Dependencies
+        run: pip install requests
+      - name: Run Script
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python earthquake_alert.py
