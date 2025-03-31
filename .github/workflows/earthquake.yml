@@ -2,8 +2,8 @@ name: Earthquake Notification
 
 on:
   schedule:
-    - cron: "* * * * *"  # รันทุกนาที
-  workflow_dispatch:  # ให้รันได้ด้วยตนเอง
+    - cron: "* * * * *"  # Run every minute
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   notify:
@@ -11,14 +11,21 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: "3.x"
+
       - name: Install Dependencies
         run: |
           pip install requests
-          pip install pytz  # ติดตั้ง pytz ด้วย
+          pip install pytz
+
+      - name: Debug Current Time
+        run: |
+          echo "Current time is $(date)"
+        
       - name: Run Script
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
